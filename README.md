@@ -1,4 +1,4 @@
-# Book template 1.6.0
+# Book template 1.9.0
 
 A starting point for an independent handbook repository. Copy this directory into a new repository,
 then replace the identifiers and content. The copy is owned by the book; the hub does not update it
@@ -8,7 +8,7 @@ in place.
 covers creating the repository from the template, the one-time repository settings, the Initialize
 book workflow, the first release and the catalog listing request, with no prior knowledge assumed.
 
-The template pins toolkit `0.11.0` and standard profile `1.0.0`. It contains no copied toolkit source
+The template pins toolkit `0.14.0` and standard profile `1.1.0`. It contains no copied toolkit source
 and never imports a parent hub checkout.
 
 ## What is included
@@ -80,7 +80,7 @@ make build
 make full
 ```
 
-`make build` requires a clean git commit, Quarto `1.11.9` and Poppler `pdfinfo`. It validates every
+`make build` requires a clean git commit, Quarto `1.11.9`, Poppler `pdfinfo` and qpdf 11 or later. It validates every
 chapter against the profile, renders a single-file Markdown edition and renders HTML, Typst/PDF and
 DOCX once with `--no-execute`, inspects the payloads and atomically creates a seven-file directory in
 `../dist`:
@@ -95,6 +95,18 @@ DOCX once with `--no-execute`, inspects the payloads and atomically creates a se
 
 `make full` runs `check` and then `build`. The build does not publish or deploy. Override the output
 with `make build OUTPUT=/external/path`.
+
+### Extra release deliverables (optional)
+
+If the book produces additional release deliverables (such as checklist exports, templates or data files), the book can opt in by adding a `release-assets` target to its `Makefile`:
+
+```makefile
+release-assets:
+	mkdir -p "$(RELEASE_ASSETS_DIR)"
+	cp _build/exports/* "$(RELEASE_ASSETS_DIR)/"
+```
+
+When present, `release.yml` runs `make release-assets RELEASE_ASSETS_DIR="$RUNNER_TEMP/extra-assets"`, validates file constraints (regular files, safe names, size caps, no collisions with core payloads), confirms the working tree stays clean, packages them deterministically into `book-extras.zip`, and writes `EXTRAS-SHA256SUMS.txt`. Books without this target publish only the standard seven files.
 
 Without `make`, run the same commands directly:
 
